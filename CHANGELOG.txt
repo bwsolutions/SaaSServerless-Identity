@@ -1,0 +1,6 @@
+# Changelog
+
+## Initial release 0.1.0
+
+The work is derived from SaaS Identity Cognito project created by Amazon.com Inc. A lot of the functions/methods and basic organization follow the original project. However many of the files were split into different files, changed from using Express to direct node.js lambda functions.
+We want to acknowledge Amazon's significant influence and contributions of functions and logic for many of the methods, but also acknowledge that because of the extensive restructuring it is impossible to note the changes at a file level.

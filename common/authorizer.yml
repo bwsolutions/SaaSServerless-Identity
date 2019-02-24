@@ -1,0 +1,3 @@
+# Custom Authorization definition
+customAuth:
+  handler: index.handler

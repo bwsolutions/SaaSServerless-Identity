@@ -1,0 +1,47 @@
+  create:
+    handler: ${self:custom.sysregdir}handler.create
+    events:
+      - http:
+          path: sys/admin
+          method: post
+          cors:
+            origin: '*'
+            allowCredentials: true
+
+  delete:
+    handler: ${self:custom.sysregdir}handler.del
+    events:
+      - http:
+          path: sys/admin
+          method: delete
+          cors:
+            origin: '*'
+            allowCredentials: true
+          authorizer: aws_iam
+
+
+  health:
+    handler: ${self:custom.sysregdir}handler.health
+    events:
+      - http:
+         path: sys/health
+         method: get
+         request:
+           parameters:
+             headers:
+               Authorization: false
+         cors:
+           origin: '*'
+           allowCredentials: true
+         authorizer:
+           ${file(../common/common.yml):${self:custom.stage}.authorizer, file(../common/common.yml):dev.authorizer}
+
+  # schedule event to register health of service to Discovery Service
+  serviceRegister1:
+    handler: ${self:custom.sysregdir}handler.serviceRegister
+    events:
+      - schedule:
+          rate: rate(5 minutes)
+          name: SysReg-service-register-event
+          description: "lambda function to register services with service discovery process and check on a regular basis"
+

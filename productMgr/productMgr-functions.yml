@@ -1,0 +1,82 @@
+  health:
+    handler: ${self:custom.productdir}handler.health
+    events:
+      - http:
+          path: product/health
+          method: get
+          cors: true
+          authorizer:
+            ${file(../common/common.yml):${self:custom.stage}.authorizer, file(../common/common.yml):dev.authorizer}
+
+
+  getProduct:
+    handler: ${self:custom.productdir}handler.getProduct
+    events:
+      - http:
+          path: product/{id}
+          method: get
+          request:
+            parameters:
+              paths:
+                id: true
+          cors: true
+          authorizer:
+            ${file(../common/common.yml):${self:custom.stage}.authorizer, file(../common/common.yml):dev.authorizer}
+
+
+  getProducts:
+    handler: ${self:custom.productdir}handler.getProducts
+    events:
+      - http:
+          path: products
+          method: get
+          cors: true
+          authorizer:
+            ${file(../common/common.yml):${self:custom.stage}.authorizer, file(../common/common.yml):dev.authorizer}
+
+
+
+  create:
+    handler: ${self:custom.productdir}handler.create
+    events:
+      - http:
+          path: product
+          method: post
+          cors: true
+          authorizer:
+            ${file(../common/common.yml):${self:custom.stage}.authorizer, file(../common/common.yml):dev.authorizer}
+
+  update:
+    handler: ${self:custom.productdir}handler.update
+    events:
+      - http:
+          path: product
+          method: put
+          cors: true
+          authorizer:
+            ${file(../common/common.yml):${self:custom.stage}.authorizer, file(../common/common.yml):dev.authorizer}
+
+  delete:
+    handler: ${self:custom.productdir}handler.del
+    events:
+      - http:
+          path: product/{id}
+          method: delete
+          request:
+            parameters:
+              paths:
+                id: true
+          cors: true
+          authorizer:
+            ${file(../common/common.yml):${self:custom.stage}.authorizer, file(../common/common.yml):dev.authorizer}
+
+  # schedule event to register health of service to Discovery Service
+  serviceRegister1:
+    handler: ${self:custom.productdir}handler.serviceRegister
+    events:
+      - schedule:
+          rate: rate(5 minutes)
+          name: ProductMgr-service-register-event
+          description: "lambda function to register services with service discovery process and check on a regular basis"
+
+

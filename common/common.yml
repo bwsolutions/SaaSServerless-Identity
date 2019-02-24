@@ -1,0 +1,118 @@
+dev:
+  apiURL:
+    Fn::Join:
+    - ""
+    - - "https://"
+      - 'Fn::ImportValue': ${self:custom.stage}-SaaSServerlessApiRestApiId
+      - ".execute-api.${self:custom.region}.amazonaws.com/${self:custom.stage}"
+
+  serviceURL:
+    Fn::Join:
+      - ""
+      - - "https://"
+        - 'Fn::ImportValue': ${self:custom.stage}-ServiceDiscoveryRestApiId
+        - ".execute-api.${self:custom.region}.amazonaws.com/${self:custom.stage}"
+
+  authorizer:
+    type: CUSTOM
+    authorizerId: ${cf:SaaSServerless-common-${self:custom.stage}.ApiGatewayAuthorizerId}
+
+  resources:
+    Resources:
+      SaaSServerlessAuthorizer:
+        Type: AWS::ApiGateway::Authorizer
+        Properties:
+          AuthorizerResultTtlInSeconds: 300
+          IdentitySource: method.request.header.Authorization
+          Name: ${self:custom.stage}-SaaSServerlessAuthorizer
+          RestApiId:
+            Ref: SaaSServerlessApiGateway
+          AuthorizerUri:
+            Fn::Join:
+              - ''
+              - - 'arn:aws:apigateway:'
+                - Ref: "AWS::Region"
+                - ':lambda:path/2015-03-31/functions/'
+                - Fn::GetAtt: "GeneralAuthorizerLambdaFunction.Arn"
+                - "/invocations"
+          Type: TOKEN
+          AuthorizerCredentials:
+            Fn::GetAtt: [SaaSServerlessApiLambdaRole, Arn]
+
+      SaaSServerlessApiLambdaRole:
+        Type: AWS::IAM::Role
+        Properties:
+          Path: /
+          RoleName: SaaSServerlessApiLambdaRole
+          AssumeRolePolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Sid: ""
+                Principal:
+                  Service: apigateway.amazonaws.com
+                Action: sts:AssumeRole
+          Policies:
+            - PolicyName: SaaSServerless-ApiLambdaPolicy
+              PolicyDocument:
+                Version: '2012-10-17'
+                Statement:
+                  - Effect: Allow
+                    Action: lambda:InvokeFunction
+                    Resource: '*'
+
+      GatewayResponseDefault4XX:
+        Type: 'AWS::ApiGateway::GatewayResponse'
+        Properties:
+          ResponseParameters:
+            gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+            gatewayresponse.header.Access-Control-Allow-Headers: "'*'"
+          ResponseType: DEFAULT_4XX
+          RestApiId:
+            Ref: 'SaaSServerlessApiGateway'
+      GatewayResponseDefault5XX:
+        Type: 'AWS::ApiGateway::GatewayResponse'
+        Properties:
+          ResponseParameters:
+            gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+            gatewayresponse.header.Access-Control-Allow-Headers: "'*'"
+          ResponseType: DEFAULT_5XX
+          RestApiId:
+            Ref: 'SaaSServerlessApiGateway'
+      SNSRole:
+        Type: AWS::IAM::Role
+        Properties:
+          Path: /
+          RoleName: SNSRole
+          AssumeRolePolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Principal:
+                  Service: cognito-idp.amazonaws.com
+                Action: sts:AssumeRole
+          Policies:
+            - PolicyName: SaaSServerless-SNSRolePolicy
+              PolicyDocument:
+                Version: '2012-10-17'
+                Statement:
+                  - Sid: SNS
+                    Effect: Allow
+                    Action: sns:publish
+                    Resource: '*'
+
+
+local:
+  apiURL: "http://localhost:3001/"
+  authorizer: customAuthFunc
+
+  resources:
+
+
+localdev:
+  apiURL:
+    Fn::Join:
+      - ""
+      - - "https://"
+        - 'Fn::ImportValue': ${self:custom.stage}-SaaSServerlessApiRestApiId
+        - ".execute-api.${self:custom.region}.amazonaws.com/${self:custom.stage}"

@@ -1,0 +1,141 @@
+  health:
+    handler: ${self:custom.userdir}handler.health
+    events:
+      - http:
+          path: user/health
+          method: get
+          cors: true
+          authorizer:
+            ${file(../common/common.yml):${self:custom.stage}.authorizer, file(../common/common.yml):dev.authorizer}
+
+
+  get:
+    handler: ${self:custom.userdir}handler.get
+    events:
+      - http:
+          path: user/{id}
+          method: get
+          request:
+            parameters:
+              paths:
+                id: true
+          cors: true
+          authorizer:
+            ${file(../common/common.yml):${self:custom.stage}.authorizer, file(../common/common.yml):dev.authorizer}
+
+  getUsers:
+    handler: ${self:custom.userdir}handler.getUsers
+    events:
+      - http:
+          path: users
+          method: get
+          cors: true
+          authorizer:
+            ${file(../common/common.yml):${self:custom.stage}.authorizer, file(../common/common.yml):dev.authorizer}
+
+  create:
+    handler: ${self:custom.userdir}handler.create
+    events:
+      - http:
+          path: user
+          method: post
+          cors: true
+          authorizer:
+            ${file(../common/common.yml):${self:custom.stage}.authorizer, file(../common/common.yml):dev.authorizer}
+
+
+  enable:
+    handler: ${self:custom.userdir}handler.enable
+    events:
+      - http:
+          path: user/enable
+          method: put
+          cors: true
+          authorizer:
+            ${file(../common/common.yml):${self:custom.stage}.authorizer, file(../common/common.yml):dev.authorizer}
+
+  disable:
+    handler: ${self:custom.userdir}handler.disable
+    events:
+      - http:
+          path: user/disable
+          method: put
+          cors: true
+          authorizer:
+            ${file(../common/common.yml):${self:custom.stage}.authorizer, file(../common/common.yml):dev.authorizer}
+
+
+  update:
+    handler: ${self:custom.userdir}handler.update
+    events:
+      - http:
+          path: user
+          method: put
+          cors: true
+          authorizer:
+            ${file(../common/common.yml):${self:custom.stage}.authorizer, file(../common/common.yml):dev.authorizer}
+
+  delete:
+    handler: ${self:custom.userdir}handler.del
+    events:
+      - http:
+          path: user/{id}
+          method: delete
+          request:
+            parameters:
+              paths:
+                id: true
+          cors: true
+          authorizer:
+            ${file(../common/common.yml):${self:custom.stage}.authorizer, file(../common/common.yml):dev.authorizer}
+
+
+
+  # schedule event to register health of service to Discovery Service
+  serviceRegister1:
+    handler: ${self:custom.userdir}handler.serviceRegister
+    events:
+      - schedule:
+          rate: rate(5 minutes)
+          name: UserMgr-service-register-event
+          description: "lambda function to register services with service discovery process and check on a regular basis"
+
+  serviceRegister2:
+    handler: ${self:custom.userdir}handler2.serviceRegister
+    events:
+      - schedule:
+          rate: rate(5 minutes)
+          name: UserMgr-service-register-event2
+          description: "lambda function to register services with service discovery process and check on a regular basis"
+
+  # internal function to be invoked by other lambda function
+  lookupPool:
+    handler: ${self:custom.userdir}handler2.lookupPool
+
+  deleteTbls:
+    handler: ${self:custom.userdir}handler2.deleteTbls
+
+  deleteTenants:
+    handler: ${self:custom.userdir}handler2.deleteTenants
+
+  deleteTenantPolicies:
+    handler: ${self:custom.userdir}handler2.deleteTenantPolicies
+
+  deleteUser:
+    handler: ${self:custom.userdir}handler2.deleteUser
+
+  createSystem:
+    handler: ${self:custom.userdir}handler2.createSystem
+
+  reg:
+    handler: ${self:custom.userdir}handler2.reg
+
+    #   events:
+  #     - http:
+  #         path: user/pool/{id}
+  #         method: get
+  #         request:
+  #           parameters:
+  #             paths:
+  #               id: true
+  #         cors: true

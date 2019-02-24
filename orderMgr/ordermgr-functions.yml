@@ -1,0 +1,78 @@
+  health:
+    handler: ${self:custom.orderdir}handler.health
+    events:
+      - http:
+          path: order/health
+          method: get
+          cors: true
+          authorizer:
+            ${file(../common/common.yml):${self:custom.stage}.authorizer, file(../common/common.yml):dev.authorizer}
+
+  getOrder:
+    handler: ${self:custom.orderdir}handler.getOrder
+    events:
+      - http:
+          path: order/{id}
+          method: get
+          request:
+            parameters:
+              paths:
+                id: true
+          cors: true
+          authorizer:
+            ${file(../common/common.yml):${self:custom.stage}.authorizer, file(../common/common.yml):dev.authorizer}
+
+  getOrders:
+    handler: ${self:custom.orderdir}handler.getOrders
+    events:
+      - http:
+          path: orders
+          method: get
+          cors: true
+          authorizer:
+            ${file(../common/common.yml):${self:custom.stage}.authorizer, file(../common/common.yml):dev.authorizer}
+
+
+
+  create:
+    handler: ${self:custom.orderdir}handler.create
+    events:
+      - http:
+          path: order
+          method: post
+          cors: true
+          authorizer:
+            ${file(../common/common.yml):${self:custom.stage}.authorizer, file(../common/common.yml):dev.authorizer}
+
+  update:
+    handler: ${self:custom.orderdir}handler.update
+    events:
+      - http:
+          path: order
+          method: put
+          cors: true
+          authorizer:
+            ${file(../common/common.yml):${self:custom.stage}.authorizer, file(../common/common.yml):dev.authorizer}
+
+  delete:
+    handler: ${self:custom.orderdir}handler.del
+    events:
+      - http:
+          path: order/{id}
+          method: delete
+          request:
+            parameters:
+              paths:
+                id: true
+          cors: true
+          authorizer:
+            ${file(../common/common.yml):${self:custom.stage}.authorizer, file(../common/common.yml):dev.authorizer}
+
+  # schedule event to register health of service to Discovery Service
+  serviceRegister1:
+    handler: ${self:custom.orderdir}handler.serviceRegister
+    events:
+      - schedule:
+          rate: rate(5 minutes)
+          name: OrderMgr-service-register-event
+          description: "lambda function to register services with service discovery process and check on a regular basis"

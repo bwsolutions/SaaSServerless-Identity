@@ -1,0 +1,102 @@
+  health:
+    handler: ${self:custom.tenantmgrdir}handler.health
+    events:
+      - http:
+          path: tenant/health
+          method: get
+          cors: true
+          authorizer:
+            ${file(../common/common.yml):${self:custom.stage}.authorizer, file(../common/common.yml):dev.authorizer}
+
+  getTenant:
+    handler: ${self:custom.tenantmgrdir}handler.getTenant
+    events:
+      - http:
+          path: tenant/{id}
+          method: get
+          request:
+            parameters:
+              paths:
+                id: true
+          cors: true
+          authorizer:
+            ${file(../common/common.yml):${self:custom.stage}.authorizer, file(../common/common.yml):dev.authorizer}
+
+  getTenants:
+    handler: ${self:custom.tenantmgrdir}handler.getTenants
+    events:
+      - http:
+          path: tenants
+          method: get
+          cors: true
+          authorizer:
+            ${file(../common/common.yml):${self:custom.stage}.authorizer, file(../common/common.yml):dev.authorizer}
+
+  getTenantsSystem:
+    handler: ${self:custom.tenantmgrdir}handler.getTenantsSystem
+    events:
+      - http:
+          path: tenants/system
+          method: get
+          cors: true
+          authorizer:
+            ${file(../common/common.yml):${self:custom.stage}.authorizer, file(../common/common.yml):dev.authorizer}
+
+  update:
+    handler: ${self:custom.tenantmgrdir}handler.update
+    events:
+      - http:
+          path: tenant
+          method: put
+          cors: true
+          authorizer:
+            ${file(../common/common.yml):${self:custom.stage}.authorizer, file(../common/common.yml):dev.authorizer}
+
+  delete:
+    handler: ${self:custom.tenantmgrdir}handler.del
+    events:
+      - http:
+          path: tenant/{id}
+          method: delete
+          request:
+            parameters:
+              paths:
+                id: true
+          cors: true
+
+  removeTenant:
+    handler: ${self:custom.tenantmgrdir}handler.removeTenant
+    events:
+      - http:
+          path: tenant/remove/{id}
+          method: delete
+          request:
+            parameters:
+              paths:
+                id: true
+          cors: true
+          authorizer:
+            ${file(../common/common.yml):${self:custom.stage}.authorizer, file(../common/common.yml):dev.authorizer}
+  # schedule event to register health of service to Discovery Service
+  serviceRegister1:
+    handler: ${self:custom.tenantmgrdir}handler.serviceRegister
+    events:
+      - schedule:
+          rate: rate(5 minutes)
+          name: TenantMgr-service-register-event
+          description: "lambda function to register services with service discovery process and check on a regular basis"
+
+  # schedule event to register health of service to Discovery Service
+  serviceRegister2:
+    handler: ${self:custom.tenantmgrdir}handler2.serviceRegister
+    events:
+      - schedule:
+          rate: rate(5 minutes)
+          name: TenantMgr-service-register-event2
+          description: "lambda function to register services with service discovery process and check on a regular basis"
+
+
+  # Internal functions launched by lambda.invoke  - no external access
+  create:
+    handler: ${self:custom.tenantmgrdir}handler2.create
+

@@ -1,0 +1,107 @@
+service: SaaSServerless-ProductMgr
+
+# Use the serverless-webpack plugin to transpile ES6
+plugins:
+  - serverless-webpack
+  - serverless-offline
+
+custom:
+  # Our stage is based on what is passed in when running serverless
+  # commands. Or falls back to what we have set in the provider section.
+  stage: ${opt:stage, self:provider.stage}
+  table:
+    user: ${opt:usertable, self:provider.table.user}
+    tenant: ${opt:tenanttable, self:provider.table.tenant}
+    order: ${opt:ordertable, self:provider.table.order}
+    product: ${opt:producttable, self:provider.table.product}
+  configdir:
+    local: "../config/"
+    dev: "./config/"
+    prod: "./config/"
+  region: ${opt:region, self:provider.region}
+  authdir: "../authMgr/"
+  customauthdir: "../common/"
+  orderdir: "../orderMgr/"
+  productdir: ""
+  sysregdir: "../sysReg/"
+  tenantmgrdir: "../tenantMgr/"
+  tenantregdir: "../tenantReg/"
+  userdir: "../userMgr/"
+  libsdir: "../../libs/"
+  # Load our webpack config
+  webpack:
+    webpackConfig: ./webpack.config.js
+    includeModules: true
+
+provider:
+  name: aws
+  runtime: nodejs8.10
+  timeout: 60 #set timeout to 30 seconds
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - "lambda:InvokeFunction"
+        - "dynamodb:*"
+      Resource: "*"
+  stage: dev
+  region: us-east-1
+  table:
+    user: ${self:custom.stage}-SaaS-user
+    tenant: ${self:custom.stage}-SaaS-tenant
+    order: ${self:custom.stage}-SaaS-order
+    product: ${self:custom.stage}-SaaS-product
+  environment:
+    stage: ${self:custom.stage}
+    AWS_REGION: ${self:custom.region}
+
+    USER_TABLE: ${self:custom.table.user}
+    TENANT_TABLE: ${self:custom.table.tenant}
+    ORDER_TABLE: ${self:custom.table.order}
+    PRODUCT_TABLE: ${self:custom.table.product}
+
+    restApiId:
+      'Fn::ImportValue': ${self:custom.stage}-SaaSServerlessApiRestApiId
+    apiURL:
+      ${file(../common/common.yml):${self:custom.stage}.apiURL, file(../common/common.yml):dev.apiURL}
+    PROJECT_NAME:
+      ${cf:SaaSServerless-common-${self:custom.stage}.ProjectName,'SaaSServerlessProject'}
+    serviceURL:
+      ${file(../common/common.yml):${self:custom.stage}.serviceURL, file(../common/common.yml):dev.serviceURL}
+
+    SNS_ROLE_ARN:
+      'Fn::ImportValue': ${self:custom.stage}-SaaSServerlessSNSRoleArn
+
+    NODE_CONFIG_DIR: ${self:custom.configdir.${self:custom.stage}}
+
+  # define share ApiGateway
+  apiGateway:
+    restApiId:
+      'Fn::ImportValue': ${self:custom.stage}-SaaSServerlessApiRestApiId
+    restApiRootResourceId:
+      'Fn::ImportValue': ${self:custom.stage}-SaaSServerlessApiRestApiRootResourceId
+
+functions:
+  - ${file(${self:custom.productdir}productMgr-functions.yml)}
+  - ${file(${self:custom.customauthdir}customAuth-functions.yml)}
+
+resources:
+  Resources:
+    ProductDB:
+      Type: 'AWS::DynamoDB::Table'
+      Properties:
+        AttributeDefinitions:
+          - AttributeName: tenantId
+            AttributeType: S
+          - AttributeName: productId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: tenantId
+            KeyType: HASH
+          - AttributeName: productId
+            KeyType: RANGE
+        ProvisionedThroughput:
+          ReadCapacityUnits: 10
+          WriteCapacityUnits: 10
+        TableName: ${self:custom.table.product}
+
+

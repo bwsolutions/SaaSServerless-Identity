@@ -1,0 +1,2 @@
+  customAuthFunc:
+    handler: ${self:custom.customauthdir}index.handler

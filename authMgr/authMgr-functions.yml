@@ -1,0 +1,39 @@
+  health:
+    handler: ${self:custom.authdir}handler.health
+    events:
+      - http:
+          path: auth/health
+          method: get
+          cors:
+            origin: '*'
+            allowCredentials: true
+          authorizer:
+            ${file(../common/common.yml):${self:custom.stage}.authorizer, file(../common/common.yml):dev.authorizer}
+
+  authenticate:
+    handler: ${self:custom.authdir}handler.authenticate
+    events:
+      - http:
+          path: auth
+          method: post
+          cors: true
+
+  refresh:
+    handler: ${self:custom.authdir}handler.refresh
+    events:
+      - http:
+          path: auth/refresh
+          method: post
+          cors: true
+          authorizer:
+            ${file(../common/common.yml):${self:custom.stage}.authorizer, file(../common/common.yml):dev.authorizer}
+
+  # schedule event to register health of service to Discovery Service
+  serviceRegister1:
+    handler: ${self:custom.authdir}handler.serviceRegister
+    events:
+      - schedule:
+          rate: rate(5 minutes)
+          name: AuthMgr-service-register-event
+          description: "lambda function to register services with service discovery process and check on a regular basis"
+

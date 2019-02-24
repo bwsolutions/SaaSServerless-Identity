@@ -1,0 +1,35 @@
+{
+  "name": "SaaSServerless-orderMgr-api",
+  "version": "1.0.0",
+  "description": "SaaSServerless orderMgr api functions",
+  "main": "handler.js",
+  "scripts": {
+    "test": "jest",
+    "offline": "sls offline start --stage local --port 3015 --noTimeout",
+    "localdb": "serverless dynamodb start --stage local --port 8000 --dbPath ./LocalDB"
+  },
+  "author": "Bill Stoltz",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "devDependencies": {
+    "aws-sdk": "^2.373.0",
+    "babel-core": "^6.26.0",
+    "babel-loader": "^7.1.4",
+    "jest": "^21.2.1",
+    "serverless-offline": "^3.31.3",
+    "serverless-webpack": "^5.1.0",
+    "webpack": "^4.27.1",
+    "webpack-node-externals": "^1.6.0"
+  },
+  "dependencies": {
+    "async": "^2.6.1",
+    "copy-webpack-plugin": "^4.6.0",
+    "jwk-to-pem": "^2.0.1",
+    "jwt-decode": "^2.2.0",
+    "request": "^2.88.0",
+    "uuidv4": "^2.0.0"
+  }
+}

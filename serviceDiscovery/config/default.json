@@ -1,0 +1,37 @@
+{
+  "Config": {
+    "local": {
+      "protocol": "http://",
+      "domain": "localhost",
+      "region": "localhost",
+      "aws_region": "us-east-1",
+      "role": {
+        "sns": ""
+      },
+      "log": {
+        "level": "debug"
+      }
+    },
+    "dev":{
+      "protocol": "https://",
+      "domain": "localhost",
+      "region": "us-east-1",
+      "aws_region": "us-east-1",
+      "table": {
+        "serviceDB": "serviceDB"
+      },
+      "log": {
+        "level": "debug"
+      }
+    },
+    "prod":{
+      "protocol": "https://",
+      "table": {
+        "serviceDB": "serviceDB",
+      },
+       "log": {
+        "level": "debug"
+      }
+    }
+  }
+}

@@ -1,0 +1,143 @@
+service: SaaSServerless-serviceRegistry
+
+# Use the serverless-webpack plugin to transpile ES6
+plugins:
+  - serverless-webpack
+  #- serverless-offline
+
+custom:
+  # Our stage is based on what is passed in when running serverless
+  # commands. Or falls back to what we have set in the provider section.
+  stage: ${opt:stage, self:provider.stage}
+  region: ${opt:region, self:provider.region}
+  table: ${opt:table, self:provider.table}
+  configdir:
+    local: "./config/"
+    dev: "./config/"
+    prod: "./config/"
+  # Load our webpack config
+  webpack:
+    webpackConfig: ./webpack.config.js
+    includeModules: true
+
+provider:
+  name: aws
+  runtime: nodejs8.10
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - "lambda:InvokeFunction"
+        - "dynamodb:*"
+      Resource: "*"
+  stage: dev
+  region: us-east-1
+  table: ${self:custom.stage}-SaaSServiceDiscovery-services
+
+  environment:
+    stage: ${self:custom.stage}
+    NODE_CONFIG_DIR: ${self:custom.configdir.${self:custom.stage}}
+    SERVICEDISCOVERY_TABLE: ${self:custom.table}
+    AWS_REGION: ${self:custom.region}
+
+  # define shared ApiGateway to be referenced by other services serverless.yml file
+  apiGateway:
+    restApiId:
+      Ref: ServiceDiscoveryApiGateway
+    restApiRootResourceId:
+      Fn::GetAtt:
+        - ServiceDiscoveryApiGateway
+        - RootResourceId
+
+functions:
+  lookup:
+    handler: handler.lookup
+    events:
+      - http:
+          path: /catalog/{serviceName}/{serviceVersion}
+          method: get
+          request:
+            parameters:
+              paths:
+                serviceName: true
+                serviceVersion: true
+          cors:
+            origin: '*'
+            allowCredentials: true
+
+  register:
+    handler: handler.register
+    events:
+      - http:
+          path: /catalog/register
+          method: post
+          cors: true
+  deregister:
+    handler: handler.deregister
+    events:
+      - http:
+          path: /catalog/deregister
+          method: post
+          cors: true
+
+resources:
+  Resources:
+    ServiceDiscoveryApiGateway:
+      Type: AWS::ApiGateway::RestApi
+      Properties:
+        Name: ${self:custom.stage}-ServiceDiscoveryApi
+
+    GatewayResponseDefault4XX:
+      Type: 'AWS::ApiGateway::GatewayResponse'
+      Properties:
+        ResponseParameters:
+          gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+          gatewayresponse.header.Access-Control-Allow-Headers: "'*'"
+        ResponseType: DEFAULT_4XX
+        RestApiId:
+          Ref: 'ServiceDiscoveryApiGateway'
+
+    GatewayResponseDefault5XX:
+      Type: 'AWS::ApiGateway::GatewayResponse'
+      Properties:
+        ResponseParameters:
+          gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+          gatewayresponse.header.Access-Control-Allow-Headers: "'*'"
+        ResponseType: DEFAULT_5XX
+        RestApiId:
+          Ref: 'ServiceDiscoveryApiGateway'
+
+    ServicesDB:
+      Type: 'AWS::DynamoDB::Table'
+      Properties:
+        AttributeDefinitions:
+          - AttributeName: serviceName
+            AttributeType: S
+          - AttributeName: serviceVersion
+            AttributeType: S
+        KeySchema:
+          - AttributeName: serviceName
+            KeyType: HASH
+          - AttributeName: serviceVersion
+            KeyType: RANGE
+        ProvisionedThroughput:
+          ReadCapacityUnits: 10
+          WriteCapacityUnits: 10
+        TableName: ${self:custom.table}
+
+
+  Outputs:
+    ServiceDiscoveryRestApiId:
+      Value:
+        Ref: ServiceDiscoveryApiGateway
+      Export:
+        Name: ${self:custom.stage}-ServiceDiscoveryRestApiId
+
+    ServiceDiscoveryRestApiRootResourceId:
+      Value:
+        Fn::GetAtt:
+          - ServiceDiscoveryApiGateway
+          - RootResourceId
+      Export:
+        Name: ${self:custom.stage}-ServiceDiscoveryRestApiRootResourceId
+
+

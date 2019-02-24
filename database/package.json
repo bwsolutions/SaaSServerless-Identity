@@ -1,0 +1,38 @@
+{
+  "name": "SaaSServerless-database",
+  "version": "1.0.0",
+  "description": "SaaS Quickstart",
+  "main": "handler.js",
+  "scripts": {
+    "test": "jest",
+    "offline": "sls offline start --stage local --port 3001",
+    "localdb": "serverless dynamodb start --stage local --port 8000 --dbPath ./LocalDB"
+  },
+  "author": "Bill Stoltz",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "devDependencies": {
+    "aws-sdk": "^2.373.0",
+    "babel-core": "^6.26.0",
+    "babel-loader": "^7.1.4",
+    "babel-plugin-source-map-support": "^1.0.0",
+    "babel-plugin-transform-runtime": "^6.23.0",
+    "babel-preset-env": "^1.6.1",
+    "babel-preset-stage-3": "^6.24.1",
+    "jest": "^21.2.1",
+    "serverless-offline": "^3.31.3",
+    "serverless-webpack": "^5.1.0",
+    "webpack": "^4.27.1",
+    "webpack-node-externals": "^1.6.0"
+  },
+  "dependencies": {
+    "async": "^2.6.1",
+    "babel-runtime": "^6.26.0",
+    "dynamodb": "^1.1.2",
+    "serverless-dynamodb-local": "^0.2.35",
+    "source-map-support": "^0.4.18"
+  }
+}

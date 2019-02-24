@@ -1,0 +1,27 @@
+  health:
+    handler: ${self:custom.tenantregdir}handler.health
+    events:
+      - http:
+          path: reg/health
+          method: get
+          cors: true
+          authorizer:
+              ${file(../common/common.yml):${self:custom.stage}.authorizer, file(../common/common.yml):dev.authorizer}
+
+  register:
+    handler: ${self:custom.tenantregdir}handler.register
+    events:
+      - http:
+          path: reg
+          method: post
+          cors: true
+
+  # schedule event to register health of service to Discovery Service
+  serviceRegister:
+      handler: ${self:custom.tenantregdir}handler.serviceRegister
+      events:
+        - schedule:
+            rate: rate(5 minutes)
+            name: TenantReg-service-register-event
+            description: "lambda function to register services with service discovery process and check on a regular basis"
+

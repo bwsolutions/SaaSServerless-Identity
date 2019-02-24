@@ -1,0 +1,173 @@
+{
+  "Config": {
+    "local": {
+      "projectName": "SaaSServerless",
+      "protocol": "http://",
+      "domain": "localhost",
+      "port": {
+        "auth": 3000,
+        "user": 3001,
+        "tenant": 3003,
+        "reg": 3004,
+        "sys": 3011,
+        "product": 3006,
+        "order": 3015
+      },
+      "role": {
+        "sns": ""
+      },
+      "name": {
+        "auth": "Authentication Manager",
+        "user": "User Manager",
+        "tenant": "Tenant Manager",
+        "reg": "Tenant Registration Manager",
+        "sys": "System Registration Manager",
+        "product": "Product Manager",
+        "order": "Order Manager"
+      },
+      "table": {
+        "user": "User",
+        "order": "Order",
+        "product": "Product",
+        "tenant": "Tenant"
+      },
+      "userRole": {
+        "systemAdmin" : "SystemAdmin",
+        "systemUser" : "SystemUser",
+        "tenantAdmin" : "TenantAdmin",
+        "tenantUser" : "TenantUser"
+      },
+      "tier": {
+        "system": "System Tier"
+      },
+      "log": {
+        "level": "debug"
+      }
+    },
+    "localdev": {
+      "projectName": "SaaSServerless",
+      "protocol": "http://",
+      "domain": "localhost",
+      "port": {
+        "auth": 3000,
+        "user": 3000,
+        "tenant": 3000,
+        "reg": 3000,
+        "sys": 3000,
+        "product": 3000,
+        "order": 3000
+      },
+      "role": {
+        "sns": ""
+      },
+      "name": {
+        "auth": "Authentication Manager",
+        "user": "User Manager",
+        "tenant": "Tenant Manager",
+        "reg": "Tenant Registration Manager",
+        "sys": "System Registration Manager",
+        "product": "Product Manager",
+        "order": "Order Manager"
+      },
+      "table": {
+        "user": "User",
+        "order": "Order",
+        "product": "Product",
+        "tenant": "Tenant"
+      },
+      "userRole": {
+        "systemAdmin" : "SystemAdmin",
+        "systemUser" : "SystemUser",
+        "tenantAdmin" : "TenantAdmin",
+        "tenantUser" : "TenantUser"
+      },
+      "tier": {
+        "system": "System Tier"
+      },
+      "log": {
+        "level": "debug"
+      }
+    },
+    "dev":{
+      "projectName": "SaaSServerless",
+      "protocol": "https://",
+      "domain": "localhost",
+      "port": {
+        "auth": 3001,
+        "user": 3001,
+        "tenant": 3001,
+        "reg": 3001,
+        "sys": 3001,
+        "product": 3001,
+        "order": 3001
+      },
+      "name": {
+        "auth": "Authentication Manager",
+        "user": "User Manager",
+        "tenant": "Tenant Manager",
+        "reg": "Tenant Registration Manager",
+        "sys": "System Registration Manager",
+        "product": "Product Manager",
+        "order": "Order Manager"
+      },
+      "table": {
+        "user": "User",
+        "order": "Order",
+        "product": "Product",
+        "tenant": "Tenant"
+      },
+      "userRole": {
+        "systemAdmin" : "SystemAdmin",
+        "systemUser" : "SystemUser",
+        "tenantAdmin" : "TenantAdmin",
+        "tenantUser" : "TenantUser"
+      },
+      "tier": {
+        "system": "System Tier"
+      },
+      "log": {
+        "level": "debug"
+      }
+    },
+    "prod":{
+      "projectName": "SaaSServerless",
+      "protocol": "https://",
+      "port-deprecated": {
+        "auth": 3000,
+        "user": 3001,
+        "tenant": 3003,
+        "reg": 3004,
+        "sys": 3011,
+        "product": 3006,
+        "order": 3015
+      },
+      "name": {
+        "auth": "Authentication Manager",
+        "user": "User Manager",
+        "tenant": "Tenant Manager",
+        "reg": "Tenant Registration Manager",
+        "sys": "System Registration Manager",
+        "product": "Product Manager",
+        "order": "Order Manager"
+      },
+      "table": {
+        "user": "User",
+        "order": "Order",
+        "product": "Product",
+        "tenant": "Tenant"
+      },
+      "userRole": {
+        "systemAdmin" : "SystemAdmin",
+        "systemUser" : "SystemUser",
+        "tenantAdmin" : "TenantAdmin",
+        "tenantUser" : "TenantUser"
+      },
+      "tier": {
+        "system": "System Tier"
+      },
+      "log": {
+        "level": "debug"
+      }
+    }
+  }
+}
