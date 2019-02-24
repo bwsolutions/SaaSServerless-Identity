@@ -34,9 +34,6 @@ The architecture was changed from using EC2 instances for the microservices, to 
 * By default this framework will install this in AWS Region us-east-1. If you want to install in a different region you will need to do the following steps:
   - edit the common/common.yml file. 
   - Change the region for each stage to a valid AWS region name.
-* If you want to use a different prefix name for API gateway and other resources, 
-  - edit the common/serverless.yml file. 
-  - Under "custom:" section change the "projectName" field.
   
 ## Installation
 The following steps will install and setup the microservices on AWS, using your AWS account. Make sure your account has Admin permissions, or permissions to create resources on AWS.

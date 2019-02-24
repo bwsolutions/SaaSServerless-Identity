@@ -64,7 +64,7 @@ provider:
     apiURL:
       ${file(../common/common.yml):${self:custom.stage}.apiURL, file(../common/common.yml):dev.apiURL}
     PROJECT_NAME:
-      ${cf:SaaSServerless-common-${self:custom.stage}.ProjectName,'SaaSServerlessProject'}
+      ${cf:SaaSServerless-common-${self:custom.stage}.ProjectName,'SaaSServerless'}
     serviceURL:
       ${file(../common/common.yml):${self:custom.stage}.serviceURL, file(../common/common.yml):dev.serviceURL}
 
