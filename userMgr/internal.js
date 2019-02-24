@@ -233,6 +233,7 @@ function provisionAdminUserWithRoles(user, credentials, adminPolicyName, userPol
             callback( new Error ('User already exists!'));
         }
         else {
+            console.log("Call createUserPool...");
             // create the new user
            cognitoUsers.createUserPool(user.tenant_id)
                 .then(function (poolData) {
@@ -245,8 +246,8 @@ function provisionAdminUserWithRoles(user, credentials, adminPolicyName, userPol
 
                     // add the user pool to the policy template configuration (couldn't add until here)
                     policyCreationParams.userPoolId = createdUserPoolData.UserPool.Id;
-
-                    // crete the user pool for the new tenant
+                    console.log("Call createUserPoolClient...");
+                    // create the user pool for the new tenant
                     return cognitoUsers.createUserPoolClient(clientConfigParams);
                 })
                 .then(function(userPoolClientData) {
@@ -256,18 +257,28 @@ function provisionAdminUserWithRoles(user, credentials, adminPolicyName, userPol
                         "UserPoolId": userPoolClientData.UserPoolClient.UserPoolId,
                         "Name": userPoolClientData.UserPoolClient.ClientName
                     };
+                    console.log("Call createIdentityPool...");
                     return cognitoUsers.createIdentityPool(identityPoolConfigParams);
                 })
                 .then( function(identityPoolData) {
                     createdIdentityPool = identityPoolData;
 
+                    console.log("got identityPoolData...");
+                    console.log(identityPoolData);
+
                     // create and populate policy templates
                     trustPolicyTemplate = cognitoUsers.getTrustPolicy(identityPoolData.IdentityPoolId);
+                    console.log("Call getAccountId...");
                     return cognitoUsers.getAccountId();
                 })
                 .then(function(accountId) {
+                    console.log("got accountId...");
+                    console.log(accountId);
 
                     policyCreationParams.accountId = accountId;
+                    console.log("got policyCreationParams...");
+                    console.log(policyCreationParams);
+
                     // get the admin policy template
                     var adminPolicyTemplate = cognitoUsers.getPolicyTemplate(adminPolicyName, policyCreationParams);
 
@@ -279,12 +290,18 @@ function provisionAdminUserWithRoles(user, credentials, adminPolicyName, userPol
                         "policyName": policyName,
                         "policyDocument": adminPolicyTemplate
                     };
+                    console.log("got adminPolicyParams...");
+                    console.log(adminPolicyParams);
 
+                    console.log("Call createPolicy(admin)...");
                     return cognitoUsers.createPolicy(adminPolicyParams)
                 })
                 .then(function (adminPolicy) {
                     createdAdminPolicy = adminPolicy;
+                    console.log("got adminPolicy...");
+                    console.log(adminPolicy);
 
+                    console.log("Call createNewUser...");
                     return sharedFunctions.createNewUser(credentials, createdUserPoolData.UserPool.Id, createdIdentityPool.IdentityPoolId, createdUserPoolClient.UserPoolClient.ClientId, user.tenant_id, user);
                 })
                 .then(function() {
@@ -299,10 +316,15 @@ function provisionAdminUserWithRoles(user, credentials, adminPolicyName, userPol
                         "policyDocument": userPolicyTemplate
                     };
 
+                    console.log("got userPolicyParams...");
+                    console.log(userPolicyParams);
+                    console.log("Call createPolicy(user)...");
                     return cognitoUsers.createPolicy(userPolicyParams)
                 })
                 .then(function(userPolicy) {
                     createdUserPolicy = userPolicy;
+                    console.log("got userPolicy...");
+                    console.log(userPolicy);
 
                     var adminRoleName = user.tenant_id + '-' + adminPolicyName;
                     var adminRoleParams = {
@@ -310,6 +332,7 @@ function provisionAdminUserWithRoles(user, credentials, adminPolicyName, userPol
                         "roleName": adminRoleName
                     };
 
+                    console.log("Call createRole(admin)...");
                     return cognitoUsers.createRole(adminRoleParams);
                 })
                 .then(function(adminRole) {
@@ -321,6 +344,7 @@ function provisionAdminUserWithRoles(user, credentials, adminPolicyName, userPol
                         "roleName": userRoleName
                     };
 
+                    console.log("Call createRole(user)...");
                     return cognitoUsers.createRole(userRoleParams)
                 })
                 .then(function(userRole) {
@@ -331,6 +355,7 @@ function provisionAdminUserWithRoles(user, credentials, adminPolicyName, userPol
                         "roleName": trustPolicyRoleName
                     };
 
+                    console.log("Call createRole(trust)...");
                     return cognitoUsers.createRole(trustPolicyRoleParams)
                 })
                 .then(function(trustPolicyRole) {
@@ -340,6 +365,7 @@ function provisionAdminUserWithRoles(user, credentials, adminPolicyName, userPol
                         RoleName: createdAdminRole.Role.RoleName
                     };
 
+                    console.log("Call addPolicyToRole(admin)...");
                     return cognitoUsers.addPolicyToRole(adminPolicyRoleParams);
                 })
                 .then(function() {
@@ -348,6 +374,7 @@ function provisionAdminUserWithRoles(user, credentials, adminPolicyName, userPol
                         RoleName: createdUserRole.Role.RoleName
                     };
 
+                    console.log("Call addPolicyToRole(user)...");
                     return cognitoUsers.addPolicyToRole(userPolicyRoleParams);
                 })
                 .then(function() {
@@ -361,6 +388,7 @@ function provisionAdminUserWithRoles(user, credentials, adminPolicyName, userPol
                         "adminRoleName": adminPolicyName,
                         "userRoleName": userPolicyName
                     };
+                    console.log("Call addRoleToIdentity...");
                     return cognitoUsers.addRoleToIdentity(addRoleToIdentityParams);
                 })
                 .then(function(identityRole) {
@@ -379,6 +407,8 @@ function provisionAdminUserWithRoles(user, credentials, adminPolicyName, userPol
                         },
                         "addRoleToIdentity": identityRole
                     };
+                    console.log("Complete callback user with data...");
+                    console.log(returnObject);
                     callback(null, returnObject)
                 })
                 .catch (async function(err) {
