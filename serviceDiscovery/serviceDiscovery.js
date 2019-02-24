@@ -2,8 +2,9 @@
 const AWS = require('aws-sdk');
 
 // Configure Environment
-const configModule = require('../libs/config-helper.js');
-var configuration = configModule.configure(process.env.stage);
+var configuration = {
+    table: { serviceDiscovery: process.env.SERVICEDISCOVERY_TABLE }
+};
 
 const DynamoDBHelper = require('../libs/dynamodb-helper.js');
 

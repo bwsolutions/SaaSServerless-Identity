@@ -37,7 +37,7 @@ custom:
 provider:
   name: aws
   runtime: nodejs8.10
-  timeout: 60 #set timeout to 30 seconds
+  timeout: 30 #set timeout to 30 seconds
   iamRoleStatements:
     - Effect: "Allow"
       Action:
@@ -53,7 +53,7 @@ provider:
     product: ${self:custom.stage}-SaaS-product
   environment:
     stage: ${self:custom.stage}
-    AWS_REGION: ${self:custom.region}
+    region: ${self:custom.region}
 
     USER_TABLE: ${self:custom.table.user}
     TENANT_TABLE: ${self:custom.table.tenant}

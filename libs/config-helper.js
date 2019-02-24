@@ -29,16 +29,26 @@ module.exports.configure = function(environment) {
             environment = "local";
         }
     }
+
+    console.log("AWS_REGION = ", process.env.AWS_REGION);
+    console.log("serviceURL = ", process.env.serviceURL);
+    console.log("SNS_ROLE_ARN = ", process.env.SNS_ROLE_ARN);
+    console.log("USER_TABLE = ", process.env.USER_TABLE);
+    console.log("TENANT_TABLE = ", process.env.TENANT_TABLE);
+    console.log("PRODUCT_TABLE = ", process.env.PRODUCT_TABLE);
+    console.log("ORDER_TABLE = ", process.env.ORDER_TABLE);
+
     switch(environment) {
         case "prod":
 
-            if(process.env.AWS_REGION == undefined || process.env.SERVICE_URL == undefined || process.env.SNS_ROLE_ARN == undefined ||  process.env.USER_TABLE == undefined || process.env.TENANT_TABLE == undefined || process.env.PRODUCT_TABLE == undefined || process.env.ORDER_TABLE == undefined)
+            if(process.env.AWS_REGION == undefined || process.env.serviceURL == undefined || process.env.SNS_ROLE_ARN == undefined ||  process.env.USER_TABLE == undefined || process.env.TENANT_TABLE == undefined || process.env.PRODUCT_TABLE == undefined || process.env.ORDER_TABLE == undefined)
             {
                 var error = "Production Environment Variables Not Properly Configured. \nPlease ensure AWS_REGION, SERVCE_URL, SNS_ROLE_ARN environment Variables are set."
                 throw error;
                 break;
             }
             else {
+
                 var port = prod.port;
                 var name = prod.name;
                 //var table = prod.table;
@@ -49,7 +59,6 @@ module.exports.configure = function(environment) {
                     aws_region: process.env.AWS_REGION,
                     cognito_region: process.env.AWS_REGION,
                     domain: process.env.SERVICE_URL,
-                    service_url: prod.protocol + process.env.SERVICE_URL,
                     name: name,
                     table: {
                         serviceDiscovery: process.env.SERVICEDISCOVERY_TABLE,
@@ -79,43 +88,50 @@ module.exports.configure = function(environment) {
                 break;
             }
         case "dev":
-            var port = dev.port;
-            var name = dev.name;
-            var table = dev.table;
 
-            config = {
-                environment: environment,
-                projectName: process.env.PROJECT_NAME ? process.env.PROJECT_NAME : dev.projectName,
-                aws_region: process.env.AWS_REGION,
-                cognito_region: process.env.AWS_REGION,
-                domain: dev.domain,
-                service_url: dev.protocol + dev.domain,
-                name: name,
-                table: {
-                    serviceDiscovery: process.env.SERVICEDISCOVERY_TABLE,
-                    user: process.env.USER_TABLE,
-                    tenant: process.env.TENANT_TABLE,
-                    product: process.env.PRODUCT_TABLE,
-                    order: process.env.ORDER_TABLE
-                },
-                userRole: dev.userRole,
-                role: {
-                    sns: process.env.SNS_ROLE_ARN
-                },
-                tier: dev.tier,
-                port: port,
-                loglevel: dev.log.level,
-                url: {
-                    tenant:  process.env.apiURL + '/tenant',
-                    user:  process.env.apiURL +  '/user',
-                    product:  process.env.apiURL + '/product',
-                    reg: process.env.apiURL + '/reg',
-                    auth:  process.env.apiURL + '/auth',
-                    admins:  process.env.apiURL + '/sys',
-                    order:  process.env.apiURL + '/order'
+                console.log("AWS_REGION = ", process.env.AWS_REGION);
+                console.log("serviceURL = ", process.env.serviceURL);
+                console.log("SNS_ROLE_ARN = ", process.env.SNS_ROLE_ARN);
+                console.log("USER_TABLE = ", process.env.USER_TABLE);
+                console.log("TENANT_TABLE = ", process.env.TENANT_TABLE);
+                console.log("PRODUCT_TABLE = ", process.env.PRODUCT_TABLE);
+                console.log("ORDER_TABLE = ", process.env.ORDER_TABLE);
+
+                var port = dev.port;
+                var name = dev.name;
+                var table = dev.table;
+
+                config = {
+                    environment:    environment,
+                    projectName:    process.env.PROJECT_NAME ? process.env.PROJECT_NAME : dev.projectName,
+                    aws_region:     process.env.AWS_REGION,
+                    cognito_region: process.env.AWS_REGION,
+                    domain:         dev.domain,
+                    name:           name,
+                    table:          {
+                        serviceDiscovery: process.env.SERVICEDISCOVERY_TABLE,
+                        user:             process.env.USER_TABLE,
+                        tenant:           process.env.TENANT_TABLE,
+                        product:          process.env.PRODUCT_TABLE,
+                        order:            process.env.ORDER_TABLE
+                    },
+                    userRole:       dev.userRole,
+                    role:           {
+                        sns: process.env.SNS_ROLE_ARN
+                    },
+                    tier:           dev.tier,
+                    port:           port,
+                    loglevel:       dev.log.level,
+                    url:            {
+                        tenant:  process.env.apiURL + '/tenant',
+                        user:    process.env.apiURL + '/user',
+                        product: process.env.apiURL + '/product',
+                        reg:     process.env.apiURL + '/reg',
+                        auth:    process.env.apiURL + '/auth',
+                        admins:  process.env.apiURL + '/sys',
+                        order:   process.env.apiURL + '/order'
+                    }
                 }
-            }
-
             return config;
             break;
 
@@ -128,13 +144,13 @@ module.exports.configure = function(environment) {
             var name = local.name;
             var table = local.table;
 
+
             config = {
                 environment: environment,
                 projectName: process.env.PROJECT_NAME ? process.env.PROJECT_NAME : local.projectName,
                 aws_region: process.env.AWS_REGION,
                 cognito_region: process.env.AWS_REGION,
                 domain: local.domain,
-                service_url: local.protocol + local.domain,
                 name: name,
                 table: table,
                 userRole: local.userRole,

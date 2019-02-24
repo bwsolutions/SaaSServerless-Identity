@@ -37,7 +37,7 @@ provider:
     stage: ${self:custom.stage}
     NODE_CONFIG_DIR: ${self:custom.configdir.${self:custom.stage}}
     SERVICEDISCOVERY_TABLE: ${self:custom.table}
-    AWS_REGION: ${self:custom.region}
+    region: ${self:custom.region}
 
   # define shared ApiGateway to be referenced by other services serverless.yml file
   apiGateway:
