@@ -263,21 +263,13 @@ function provisionAdminUserWithRoles(user, credentials, adminPolicyName, userPol
                 .then( function(identityPoolData) {
                     createdIdentityPool = identityPoolData;
 
-                    console.log("got identityPoolData...");
-                    console.log(identityPoolData);
-
                     // create and populate policy templates
                     trustPolicyTemplate = cognitoUsers.getTrustPolicy(identityPoolData.IdentityPoolId);
                     console.log("Call getAccountId...");
                     return cognitoUsers.getAccountId();
                 })
                 .then(function(accountId) {
-                    console.log("got accountId...");
-                    console.log(accountId);
-
                     policyCreationParams.accountId = accountId;
-                    console.log("got policyCreationParams...");
-                    console.log(policyCreationParams);
 
                     // get the admin policy template
                     var adminPolicyTemplate = cognitoUsers.getPolicyTemplate(adminPolicyName, policyCreationParams);
@@ -290,16 +282,13 @@ function provisionAdminUserWithRoles(user, credentials, adminPolicyName, userPol
                         "policyName": policyName,
                         "policyDocument": adminPolicyTemplate
                     };
-                    console.log("got adminPolicyParams...");
-                    console.log(adminPolicyParams);
-
+                    //console.log("use adminPolicyParams... %O", adminPolicyParams);
                     console.log("Call createPolicy(admin)...");
                     return cognitoUsers.createPolicy(adminPolicyParams)
                 })
                 .then(function (adminPolicy) {
                     createdAdminPolicy = adminPolicy;
-                    console.log("got adminPolicy...");
-                    console.log(adminPolicy);
+                    console.log("got adminPolicy... %O", adminPolicy);
 
                     console.log("Call createNewUser...");
                     return sharedFunctions.createNewUser(credentials, createdUserPoolData.UserPool.Id, createdIdentityPool.IdentityPoolId, createdUserPoolClient.UserPoolClient.ClientId, user.tenant_id, user);
@@ -316,15 +305,12 @@ function provisionAdminUserWithRoles(user, credentials, adminPolicyName, userPol
                         "policyDocument": userPolicyTemplate
                     };
 
-                    console.log("got userPolicyParams...");
-                    console.log(userPolicyParams);
                     console.log("Call createPolicy(user)...");
                     return cognitoUsers.createPolicy(userPolicyParams)
                 })
                 .then(function(userPolicy) {
                     createdUserPolicy = userPolicy;
-                    console.log("got userPolicy...");
-                    console.log(userPolicy);
+                    console.log("got userPolicy... %O", userPolicy);
 
                     var adminRoleName = user.tenant_id + '-' + adminPolicyName;
                     var adminRoleParams = {
@@ -407,8 +393,7 @@ function provisionAdminUserWithRoles(user, credentials, adminPolicyName, userPol
                         },
                         "addRoleToIdentity": identityRole
                     };
-                    console.log("Complete callback user with data...");
-                    console.log(returnObject);
+                    console.log("Complete callback user with data... %O",returnObject);
                     callback(null, returnObject)
                 })
                 .catch (async function(err) {

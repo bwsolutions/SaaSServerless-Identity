@@ -152,14 +152,11 @@ module.exports.getAccountId = function () {
 
         sts.getCallerIdentity(params, function(err,data) {
             if (err) {
-                console.error("getAccountId: error from sts.getCallerIdentity");
-                console.error(err);
+                console.error("getAccountId: error from sts.getCallerIdentity - %O",err);
                 reject(err);
             } else {
                 console.log("got Identity....");
-                console.log(data);
-                var accountId = data.Account;
-                resolve(accountId);
+                resolve(data.Account);
             }
         });
     })
@@ -847,6 +844,7 @@ module.exports.createPolicy = function (policyParams) {
 
         iam.createPolicy(params, function (err, createdPolicy) {
             if (err) {
+                console.error("Error creating policy - %O",err);
                 reject(err);
             }
             else {
