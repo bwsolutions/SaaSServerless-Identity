@@ -30,6 +30,15 @@ The architecture was changed from using EC2 instances for the microservices, to 
 5. Clone github repository.
   * git clone https://github.com/bwsolutions/SaaSServerless-Identity.git
   
+## Configuration
+- By default this framework will install this in AWS Region us-east-1. If you want to install in a different region you will 
+  - edit the common/common.yml file. 
+  - Change the region for each stage to a valid AWS region name.
+- If you want to use a different prefix name for API gateway and other resources, 
+  - edit the common/serverless.yml file. 
+  - Under "custom:" section change the "projectName" field.
+-
+  
 ## Installation
 1. cd SaaSServerless-Identity
 1. cd serviceDiscovery
@@ -41,7 +50,7 @@ The architecture was changed from using EC2 instances for the microservices, to 
 2. npm run deployAll
 
 ## Usage example
-* Use details in Application README.md to access services.
+* Use details in SaaSServerless-Client/README.md to access services.
 * monitor logs in CloudWatch 
 
 ## Acknowledgments / References

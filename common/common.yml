@@ -1,4 +1,6 @@
 dev:
+  region: us-east-1
+
   apiURL:
     Fn::Join:
     - ""
@@ -105,11 +107,13 @@ dev:
 local:
   apiURL: "http://localhost:3001/"
   authorizer: customAuthFunc
+  region: us-east-1
 
   resources:
 
 
 localdev:
+  region: us-east-1
   apiURL:
     Fn::Join:
       - ""

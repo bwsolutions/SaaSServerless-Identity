@@ -18,7 +18,7 @@ custom:
     local: "../config/"
     dev: "./config/"
     prod: "./config/"
-  region: ${opt:region, self:provider.region}
+  region: ${self:provider.region}
   authdir: "../authMgr/"
   customauthdir: "../common/"
   orderdir: "../orderMgr/"
@@ -62,7 +62,7 @@ provider:
         - "cognito-identity:*"
       Resource: "*"
   stage: dev
-  region: us-east-1
+  region: ${opt:region, file(../common/common.yml):${self:custom.stage}.region}
   table:
     user: ${self:custom.stage}-SaaS-user
     tenant: ${self:custom.stage}-SaaS-tenant

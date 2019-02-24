@@ -38,16 +38,20 @@ module.exports.getAccountId = function () {
     var sts = new AWS.STS();
     var params = {};
 
+    console.log("calling getCallerIdentity.....");
     sts.getCallerIdentity(params, function(err,data) {
         if (err) {
             console.error("getAccountId: error from sts.getCallerIdentity");
             console.error(err);
             return(err);
         } else {
+            console.log("got Identity....");
+            console.log(data);
             var accountId = data.Account;
             return(accountId);
         }
     });
+    console.log("did not return in callback?????")
 
 }
 

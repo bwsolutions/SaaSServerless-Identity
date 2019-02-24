@@ -10,7 +10,7 @@ custom:
   # commands. Or falls back to what we have set in the provider section.
   stage: ${opt:stage, self:provider.stage}
   projectName: SaaSServerless
-  region: ${opt:region, self:provider.region}
+  region: ${self:provider.region}
   # function directory
   authdir: "../authMgr/"
   customauthdir: ""
@@ -40,7 +40,7 @@ provider:
         - "cognito-identity:*"
       Resource: "*"
   stage: dev
-  region: us-east-1
+  region: ${opt:region, file(../common/common.yml):${self:custom.stage}.region}
   environment:
     stage: ${self:custom.stage}
     region: ${self:custom.region}

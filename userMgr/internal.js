@@ -214,6 +214,7 @@ function provisionAdminUserWithRoles(user, credentials, adminPolicyName, userPol
     var createdUserRole = {};
 
     var aws_account = tokenManager.getAccountId();
+    console.log("aws_account = ",aws_account);
     // setup params for template generation
     var policyCreationParams = {
         tenantId: user.tenant_id,
@@ -224,7 +225,8 @@ function provisionAdminUserWithRoles(user, credentials, adminPolicyName, userPol
         productTableName: configuration.table.product,
         orderTableName: configuration.table.order
     };
-
+    console.log("policyCreationParams:");
+    console.log(policyCreationParams);
     // init role based on admin policy name
     user.role = adminPolicyName;
 

@@ -9,7 +9,7 @@ custom:
   # Our stage is based on what is passed in when running serverless
   # commands. Or falls back to what we have set in the provider section.
   stage: ${opt:stage, self:provider.stage}
-  region: ${opt:region, self:provider.region}
+  region: ${self:provider.region}
   table: ${opt:table, self:provider.table}
   configdir:
     local: "./config/"
@@ -30,7 +30,7 @@ provider:
         - "dynamodb:*"
       Resource: "*"
   stage: dev
-  region: us-east-1
+  region: ${opt:region, file(../common/common.yml):${self:custom.stage}.region}
   table: ${self:custom.stage}-SaaSServiceDiscovery-services
 
   environment:
