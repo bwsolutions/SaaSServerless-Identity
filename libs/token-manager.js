@@ -34,26 +34,6 @@ module.exports.getTenantId = function (event) {
     return tenantId;
 }
 
-module.exports.getAccountId = function () {
-    var sts = new AWS.STS();
-    var params = {};
-
-    console.log("calling getCallerIdentity.....");
-    sts.getCallerIdentity(params, function(err,data) {
-        if (err) {
-            console.error("getAccountId: error from sts.getCallerIdentity");
-            console.error(err);
-            return(err);
-        } else {
-            console.log("got Identity....");
-            console.log(data);
-            var accountId = data.Account;
-            return(accountId);
-        }
-    });
-    console.log("did not return in callback?????")
-
-}
 
 /**
  * Extract an id token from a request, decode it and extract the user role

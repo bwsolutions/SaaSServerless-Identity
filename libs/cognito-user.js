@@ -143,6 +143,29 @@ function initCognitoServiceProvider(credentials) {
     });
     return cognitoidentityserviceprovider;
 }
+module.exports.getAccountId = function () {
+    var sts = new AWS.STS();
+    var params = {};
+
+    console.log("calling getCallerIdentity.....");
+    var promise = new Promise(function(resolve, reject) {
+
+        sts.getCallerIdentity(params, function(err,data) {
+            if (err) {
+                console.error("getAccountId: error from sts.getCallerIdentity");
+                console.error(err);
+                reject(err);
+            } else {
+                console.log("got Identity....");
+                console.log(data);
+                var accountId = data.Account;
+                resolve(accountId);
+            }
+        });
+    })
+    return promise;
+
+}
 
 /**
  * Create a new User Pool for a new tenant

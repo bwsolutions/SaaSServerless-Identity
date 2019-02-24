@@ -213,20 +213,16 @@ function provisionAdminUserWithRoles(user, credentials, adminPolicyName, userPol
     var createdUserPolicy = {};
     var createdUserRole = {};
 
-    var aws_account = tokenManager.getAccountId();
-    console.log("aws_account = ",aws_account);
     // setup params for template generation
     var policyCreationParams = {
         tenantId: user.tenant_id,
-        accountId: aws_account,
+        accountId: "", // updated later
         region: configuration.aws_region,
         tenantTableName: configuration.table.tenant,
         userTableName: configuration.table.user,
         productTableName: configuration.table.product,
         orderTableName: configuration.table.order
     };
-    console.log("policyCreationParams:");
-    console.log(policyCreationParams);
     // init role based on admin policy name
     user.role = adminPolicyName;
 
@@ -262,12 +258,16 @@ function provisionAdminUserWithRoles(user, credentials, adminPolicyName, userPol
                     };
                     return cognitoUsers.createIdentityPool(identityPoolConfigParams);
                 })
-                .then(function(identityPoolData) {
+                .then( function(identityPoolData) {
                     createdIdentityPool = identityPoolData;
 
                     // create and populate policy templates
                     trustPolicyTemplate = cognitoUsers.getTrustPolicy(identityPoolData.IdentityPoolId);
+                    return cognitoUsers.getAccountId();
+                })
+                .then(function(accountId) {
 
+                    policyCreationParams.accountId = accountId;
                     // get the admin policy template
                     var adminPolicyTemplate = cognitoUsers.getPolicyTemplate(adminPolicyName, policyCreationParams);
 
